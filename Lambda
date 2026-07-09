@@ -1,0 +1,18 @@
+
+
+Lambda functions  可以看成 ec2
+
+每個月 100 萬次請求 不用錢
+
+用 java + Lambda 要自己包jar 自己丟上去
+
+
+資料目錄
+
+cd /Users/allenwu/Desktop/interview/side project/AWS/aws-lambda-developer/sample-apps/blank-java
+
+
+修改的程式
+在 blank-java 資料夾裡，順著路徑找到這支 Java 檔案：
+src/main/java/example/Handler.java
+
