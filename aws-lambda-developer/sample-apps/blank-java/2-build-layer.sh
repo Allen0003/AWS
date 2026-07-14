@@ -8,6 +8,6 @@ then
     mvn prepare-package
   fi
 else
-  gradle -q packageLibs
-  mv build/distributions/blank-java.zip build/blank-java-lib.zip
+  gradle packageLibs
+  mv build/distributions/workspace.zip build/blank-java-lib.zip
 fi
