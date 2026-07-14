@@ -18,6 +18,6 @@ public class Handler implements RequestHandler<Map<String,String>, String> {
     @Override
     public String handleRequest(Map<String,String> event, Context context) {
 
-        return event;
+        return event.get("hello");
     }
 }
