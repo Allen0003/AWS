@@ -68,8 +68,10 @@ docker exec -it aws-builder /bin/bash
 
 
 
-在 AWS Lambda 世界
+在 AWS Lambda 世界 一個專案拆成了兩個部分：Layer（套件層） 和 Function（主程式）
 
+
+因為第三方套件通常很大且很少變動。把它們單獨做成一個 Layer 丟到 AWS 上
 
 
 輸入
@@ -80,12 +82,42 @@ docker exec -it aws-builder /bin/bash
 然候把此目錄寫在 local file  bucket-name.txt
 
 
+./2-build-layer.sh
+
+這步驟是把第三方套件 包成一個zip 檔案
 
 
+./3-deploy.sh
+
+這步驟把java 打包 上傳到 s3
+
+在裡面 template.yml（Gradle 用）和 template-mvn.yml（Maven 用）是專案本來就存在的原始說明書。
+
+
+執行 aws cloudformation package，把剛剛打包好的「Java 主程式」和「第二步的套件 zip」一起上傳到 S3 。
+
+上傳後，它會自動讀取 template.yml，把裡面原本寫本地路徑的地方改寫成 S3 的雲端網址，並自動產生一份 out.yml。
+
+
+out.yml 是 3-deploy.sh 產生的
+out.yml 會根據 template.yml 產生
+
+
+然後把 out.yml 上傳到 aws
 
 
 
 修改的程式
 在 blank-java 資料夾裡，順著路徑找到這支 Java 檔案：
 src/main/java/example/Handler.java
+
+java 裡面 有 implements RequestHandler 所以他會變成 lambda 的樣子
+
+template.yml 裡面有 lambda 的屬性 包含執行點 (implements RequestHandler)
+
+Handler 屬性 -> java implements RequestHandler
+
+如果有兩個 implements RequestHandler 要自己修改 template.yml
+
+
 
