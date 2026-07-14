@@ -4,12 +4,85 @@ Lambda functions  可以看成 ec2
 
 每個月 100 萬次請求 不用錢
 
+code 75G 以下不用錢
+
 用 java + Lambda 要自己包jar 自己丟上去
+
+
+用 docker 裡面灌 aws cli 然後才能去執行下面
 
 
 資料目錄
 
 cd /Users/allenwu/Desktop/interview/side project/AWS/aws-lambda-developer/sample-apps/blank-java
+
+
+
+用docker去搞
+
+Dockerfile
+
+-------
+
+FROM alpine:latest
+
+# 安裝 aws-cli、bash 以及常見的工具（如 curl）
+RUN apk add --no-cache aws-cli bash curl
+
+# 設定工作目錄
+WORKDIR /workspace
+
+# 預設啟動 bash
+CMD ["/bin/bash"]
+
+
+-------
+
+
+
+docker build -t aws-env .
+
+
+進到容器裡面
+
+docker run -it \
+  --name aws-builder \
+  -v "$(pwd)":/workspace \
+  -v "$HOME/.aws":/root/.aws \
+  aws-env
+
+
+
+重新使用
+
+# 1. 讓 aws-builder 重新開機
+docker start aws-builder
+
+# 2. 進入（附著）到這個容器的 bash 畫面
+docker exec -it aws-builder /bin/bash
+
+
+要先在 iam user 裡面建立 aws cli user
+
+最便宜、功能最完整的是美國機房 us-east-1
+
+
+
+在 AWS Lambda 世界
+
+
+
+輸入
+./1-create-bucket.sh
+（或是直接用 maven 打包 mvn package）。
+
+這步驟是在s3 上面 建立一個 lambda-artifacts-XXX
+然候把此目錄寫在 local file  bucket-name.txt
+
+
+
+
+
 
 
 修改的程式
