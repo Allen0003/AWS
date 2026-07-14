@@ -18,6 +18,11 @@ public class Handler implements RequestHandler<Map<String,String>, String> {
     @Override
     public String handleRequest(Map<String,String> event, Context context) {
 
+        LambdaLogger logger = context.getLogger();
+
+        logger.log("有人呼叫我了！傳進來的資料是: " + event.toString());
+
+
         return event.get("hello");
     }
 }
