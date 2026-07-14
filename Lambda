@@ -106,6 +106,17 @@ out.yml 會根據 template.yml 產生
 然後把 out.yml 上傳到 aws
 
 
+./4-invoke.sh
+
+每兩秒拿 event.json 當作輸入，去敲一次雲端 Lambda 的門，並把結果（out.json）印在畫面上。按 Ctrl + C 結束。
+
+
+
+./5-cleanup.sh
+
+大掃除！把 S3 桶子、CloudFormation 堆疊、Lambda 函數和 Log 檔案全部一鍵銷毀，一滴不漏地防止被 AWS 扣錢。
+
+
 
 修改的程式
 在 blank-java 資料夾裡，順著路徑找到這支 Java 檔案：
@@ -120,4 +131,8 @@ Handler 屬性 -> java implements RequestHandler
 如果有兩個 implements RequestHandler 要自己修改 template.yml
 
 
+
+
+
+TODO: AI 語音客服/翻譯機: 使用 Amazon Lex 與 Amazon Translate, 搭配 AWS Lambda 打造自己的智慧聊天機器人
 
