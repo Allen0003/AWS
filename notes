@@ -9,8 +9,32 @@ iPhone
 passwords -> open passwords -> all -> aws
 
 
+region: us-east-1
+
+account id: 629691902365
+
+
+重新使用
+
+# 1. 讓 aws-builder 重新開機
+docker start aws-builder
+
+# 2. 進入 到這個容器的 bash 畫面
+docker exec -it aws-builder /bin/bash
+
+
+
+
+
 
 TODO: AI 語音客服/翻譯機: 使用 Amazon Lex 與 Amazon Translate, 搭配 AWS Lambda 打造自己的智慧聊天機器人
 
 
 TODO: kiro multi agents
+
+
+TODO: 寫自己的量化交易 API：
+你懂金融、懂系統，英文又好（IELTS 7.0 可以看懂所有國外券商與加密貨幣交易所的 API 文件）。你可以自己架個 Docker，寫寫 Python/Go，去跑你自己的自動化交易、套利程式，或者當個造市商（Market Maker）賺點皮毛。
+
+TODO: 做側專案（Side Project）接案：
+海外很多小型的系統整合、智慧合約（Smart Contract）建置，在平台上（如 Upwork）常常是幾千美金在結算的。以你的技術和英文，下班隨便接一兩個案子，幾週就能賺到你一整年調薪的 2.4 萬。
