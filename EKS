@@ -1,9 +1,61 @@
 
-aws
-apss1943@gmail.com
-1943Apss@
+
+# 1. 讓 aws-builder 重新開機
+docker start aws-builder
+
+# 2. 進入（附著）到這個容器的 bash 畫面
+docker exec -it aws-builder /bin/bash
 
 
-iPhone
 
-passwords -> open passwords -> all -> aws
+# 1. 下載最新穩定版的 kubectl 二進位檔
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+# 2. 賦予執行權限並移動到系統路徑
+chmod +x ./kubectl
+mv ./kubectl /usr/local/bin/kubectl
+
+# 3. 驗證安裝是否成功
+kubectl version --client
+
+
+
+
+# 1. 下載並解壓 eksctl (適用於 Linux amd64 架構)
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+
+# 2. 將二進位檔移動到系統路徑
+mv /tmp/eksctl /usr/local/bin/eksctl
+
+# 3. 驗證安裝是否成功
+eksctl version
+
+
+
+
+1. 先在aws 上面建立 k8s 要用的東西 -> notes
+
+2. 再來就類似 k8s 之類的  k create pod
+
+
+
+
+就是負責完成 「1. 本地開發」到「2. 雲端倉庫（ECR）」 的過程：
+
+
+
+# 1. 登入 AWS ECR (請將 region 與 account ID 換成你的)
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 629691902365.dkr.ecr.us-east-1.amazonaws.com
+
+# 2. 建立一個名為 item 的倉庫
+aws ecr create-repository --repository-name item
+
+# 3. 建立 Image 並 Tag 它
+docker build -t item .
+docker tag item:latest 629691902365.dkr.ecr.us-east-1.amazonaws.com/item:latest
+
+# 4. Push 到 ECR
+docker push 629691902365.dkr.ecr.us-east-1.amazonaws.com/item:latest
+
+
+
