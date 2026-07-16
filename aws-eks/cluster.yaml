@@ -1,0 +1,19 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: my-first-eks-cluster
+  region: us-east-1
+
+managedNodeGroups:
+  - name: general-nodes
+    instanceType: t3.medium
+    desiredCapacity: 2
+    minSize: 1
+    maxSize: 3
+    volumeSize: 20
+    # 讓 Worker Nodes 擁有基礎的 AWS 權限
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
