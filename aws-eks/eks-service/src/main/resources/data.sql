@@ -1,0 +1,2 @@
+INSERT INTO item (id, name, description) VALUES ('101', 'Java-on-EKS', 'This is pre-loaded data from data.sql');
+INSERT INTO item (id, name, description) VALUES ('102', 'Redis-Cache', 'Accelerating your EKS applications');

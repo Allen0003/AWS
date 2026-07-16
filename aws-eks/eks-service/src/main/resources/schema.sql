@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS item;
+
+CREATE TABLE item (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(255)
+);
