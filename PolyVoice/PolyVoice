@@ -31,9 +31,9 @@ Lex + Lambda
 
 把整包對話內容丟給名叫 PolyVoiceFulfillment 的 Lambda 程式去處理，並且以 Lambda 回傳的答案來回覆使用者
 
-Lambda 裡面可以寫 直接call aws api translate 的東西
+Lambda 裡面可以寫 直接call aws api translate 的東西 ex: translate, polly, s3
 
-
+polly 直接當作api call 文字轉語音
 
 
 TODO: (執行清單)
