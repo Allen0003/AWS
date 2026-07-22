@@ -59,7 +59,7 @@ TODO: (執行清單)
 
     選擇前端部署方式：
 
-        利用 S3 Static Website Hosting 或 Amplify Hosting，快速架設一個 React 專案來串接你的 API Gateway。
+        利用 S3 Static Website Hosting，用一個 index.html 來串接你的 API Gateway。
 
 
 給 SAA 的特別建議

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolyVoice 語音翻譯機器人</title>
+    <style>
+        body { 
+            font-family: 'Courier New', Courier, monospace; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            background-color: #000000; 
+            color: #00FF41; 
+        }
+        .card { 
+            background-color: #000000; 
+            padding: 30px; 
+            border-radius: 10px; 
+            border: 1px solid #00FF41; 
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3); 
+        }
+        h2 { color: #00FF41; text-shadow: 0 0 5px rgba(0, 255, 65, 0.5); }
+        label { color: #00FF41; display: block; margin-top: 10px; }
+        input, select { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 8px 0 15px 0; 
+            border: 1px solid #00FF41; 
+            border-radius: 0px; 
+            background-color: #0d0d0d; 
+            color: #00FF41; 
+            font-family: 'Courier New', Courier, monospace;
+        }
+        button { 
+            background-color: #00FF41; 
+            color: #000000; 
+            border: none; 
+            padding: 12px 20px; 
+            width: 100%; 
+            border-radius: 0px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            font-weight: bold;
+            text-transform: uppercase; 
+            margin-top: 20px;
+        }
+        button:hover { background-color: #00cc33; box-shadow: 0 0 10px rgba(0, 255, 65, 0.7); }
+        .result { 
+            margin-top: 25px; 
+            padding: 15px; 
+            background-color: #0d0d0d; 
+            border: 1px solid #00FF41;
+            border-radius: 0px;
+            word-break: break-all; 
+            color: #00FF41;
+        }
+        audio { width: 100%; margin-top: 15px; outline: none; }
+        audio::-webkit-media-controls-panel { background-color: #00FF41; }
+        a { color: #00cc33; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🌍 PolyVoice 雲端語音翻譯機</h2>
+    <p>這是一個串接 AWS Polly 與 Translate 的前端測試頁面。</p>
+
+    <label>請輸入要翻譯的文字：</label>
+    <input type="text" id="textInput" value="MynameishappyApma!">
+
+    <label>選擇目標語言：</label>
+    <select id="langSelect">
+        <option value="french">法文 (French)</option>
+        <option value="chinese">中文 (Chinese)</option>
+        <option value="spanish">西班牙文 (Spanish)</option>
+    </select>
+
+    <button onclick="simulateBackend()">送出翻譯並生成語音</button>
+
+    <div class="result" id="resultBox" style="display:none;">
+        <p><strong>翻譯結果：</strong><span id="transText"></span></p>
+        <p><strong>S3 語音連結：</strong><a id="audioLink" href="#" target="_blank">點此開啟音檔</a></p>
+        <audio id="audioPlayer" controls></audio>
+    </div>
+</div>
+
+<script>
+async function simulateBackend() {
+    const text = document.getElementById('textInput').value;
+    const lang = document.getElementById('langSelect').value;
+
+    // 顯示載入中狀態
+    const resultBox = document.getElementById('resultBox');
+    resultBox.style.display = 'block';
+    document.getElementById('transText').textContent = "SYSTEM: 正在駭入雲端進行翻譯...";
+    document.getElementById('audioLink').href = "#";
+    document.getElementById('audioLink').textContent = "等待連結...";
+    document.getElementById('audioPlayer').src = "";
+
+    // 你的 API Gateway 網址
+    const apiUrl = 'https://k8m8iw0h4i.execute-api.us-east-1.amazonaws.com/translate';
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // 直接傳送文字與目標語言給 Lambda
+            body: JSON.stringify({
+                text: text,
+                targetLanguage: lang
+            })
+        });
+
+        if (!response.ok) throw new Error('API request failed');
+
+        const data = await response.json();
+        
+        // 直接對應 Lambda 回傳的新版 JSON 欄位
+        const transResult = data.translatedText;
+        const audioUrl = data.audioUrl;
+
+        // 更新網頁顯示結果
+        document.getElementById('transText').textContent = transResult;
+        document.getElementById('audioLink').href = audioUrl;
+        document.getElementById('audioLink').textContent = audioUrl;
+        document.getElementById('audioPlayer').src = audioUrl; 
+        document.getElementById('audioPlayer').play();
+
+    } catch (error) {
+        console.error(error);
+        document.getElementById('transText').textContent = "SYSTEM ERROR: 無法連接到後端。請檢查 API Gateway 設定或 CORS。";
+    }
+}
+</script>
+
+</body>
+</html>
