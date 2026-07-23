@@ -1,0 +1,65 @@
+
+DockerTrader
+
+階段一：環境建置與 API 熟悉度測試 (Week 1)
+
+目標：學會用 Python 連接交易所，並在 Docker 內跑起來。
+
+註冊一個加密貨幣交易所的 Sandbox（沙盒/測試網） 帳號（例如 Binance Testnet 或 OKX Demo），取得 API Key。
+
+寫一個簡單的 Python 腳本（使用 ccxt 套件，這是一套整合各大交易所 API 的神兵利器），抓取當前的比特幣報價。
+
+把這個腳本包進 Docker 容器中，確保它可以獨立、穩定地在背景執行。
+
+
+
+階段二：實作資料記錄與簡易回測 (Week 2 - 3)
+
+目標：收集數據，並驗證你的交易邏輯。
+
+讓你的 Docker 程式定期（例如每分鐘）把市場價格寫入資料庫（如 PostgreSQL）。
+
+找一個最簡單的策略（例如：雙均線策略或簡單的網格交易 Grid Trading）。
+
+用歷史數據進行回測，看看如果照這個邏輯跑，歷史績效如何。
+
+
+
+階段三：下單模組與風險控管 (Week 4)
+
+目標：具備真實下單與安全防護的能力。
+
+實作市價單（Market Order）與限價單（Limit Order）的發送與回報機制。
+
+最重要的一步：加入 Risk Management（風控機制）。例如：單筆最大虧損限制、總資金部位上限、API 連線中斷時的自動平倉或警報通知（整合 Telegram Bot）。
+
+
+
+
+階段四：進階玩法——套利或造市 (Month 2+)
+
+目標：實現你提到的套利（Arbitrage）或造市（Market Making）。
+
+跨交易所套利：監控 A 交易所與 B 交易所同一個幣種的價差，低買高賣。
+
+簡易造市商：在訂單簿（Order Book）的買賣雙方同時掛上限價單，透過賺取 Bid-Ask Spread（買賣價差）來獲利。
+
+
+
+把交易所當作 Chaos Engineering 的白老鼠：
+用你的技術去處理那些惡劣的網路環境。交易所無預警斷線、API Rate Limit（限流）觸發、WebSocket 封包掉失、訂單狀態不一致（Timeout 了到底有沒有成交？）。怎麼在 K8s 裡面寫出自動熔斷（Circuit Breaker）、自動重試與狀態對帳（Reconciliation）機制，這才是有意思的系統工程挑戰。
+
+極致的微服務架構：
+把一個簡單的交易腳本拆成：
+
+    Market-Data-Collector（吃 WebSocket 射進 Kafka / Redis）
+
+    Strategy-Engine（運算邏輯）
+
+    Order-Executor（發送下單指令）
+
+    然後用 Helm Chart 一把梭哈部署到你的 K8s 叢集裡，在上班時偷偷看 Pod 們互相拋事件。
+
+
+
+

@@ -27,7 +27,6 @@ docker exec -it aws-builder /bin/bash
 
 
 
-TODO: AI 語音客服/翻譯機: 使用 Amazon Lex 與 Amazon Translate, 搭配 AWS Lambda 打造自己的智慧聊天機器人
 
 TODO: 寫自己的量化交易 API：
 你懂金融、懂系統，英文又好（IELTS 7.0 可以看懂所有國外券商與加密貨幣交易所的 API 文件）。你可以自己架個 Docker，寫寫 Python/Go，去跑你自己的自動化交易、套利程式，或者當個造市商（Market Maker）賺點皮毛。
@@ -38,3 +37,25 @@ TODO: kiro multi agents
 
 TODO: 做側專案（Side Project）接案：
 海外很多小型的系統整合、智慧合約（Smart Contract）建置，在平台上（如 Upwork）常常是幾千美金在結算的。以你的技術和英文，下班隨便接一兩個案子，幾週就能賺到你一整年調薪的 2.4 萬。
+
+
+
+TODO: 將工作內容「產品化」（Micro-SaaS 或模板販售）
+
+如果你上班剛好會寫某些腳本、自動化工具，或是常常整理繁瑣的表格：
+
+做法： 把它包裝成 Notion 模板、Excel 財務模型、或是自動化小腳本，上架到 Gumroad 或 Notion Market。
+
+為什麼輕鬆： 這是典型的「被動收入」。花幾小時做好一次，之後丟在網路上，有陌生人買就是純賺，不需要跟客戶開會或交期壓力。
+
+
+
+
+TODO: 微型任務 / 資料標註（Micro-tasks & AI Training）
+
+如果你希望是那種「不用動腦、點一點就有錢」的打發時間型工作：
+
+做法： 透過 Remotasks、Outlier、DataAnnotation.tech 等平台參與 AI 模型訓練。
+
+為什麼輕鬆： 工作內容通常是幫 AI 的回答評分、挑出錯字、或者進行簡單的邏輯校對。只要會打字、看得懂英文，隨時隨地用手機或零碎時間就能做，按小時或按件計酬。
+
