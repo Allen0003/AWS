@@ -36,6 +36,11 @@ Lambda 裡面可以寫 直接call aws api translate 的東西 ex: translate, pol
 polly 直接當作api call 文字轉語音
 
 
+Lambda 如果用 python 可以直接 壓縮上傳就好
+          用 java 就要比較麻煩走 mvn build 成 zip
+
+
+
 TODO: (執行清單)
 
     定義 Lex Bot (對話核心)：

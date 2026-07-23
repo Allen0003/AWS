@@ -1,8 +1,8 @@
 
 
 graph LR
-    User((使用者)) -->|1. 錄音/上傳| Frontend[前端 Web App]
-    Frontend -->|2. HTTP API/WebSocket| APIGW[Amazon API Gateway]
+    User((使用者)) -->|1. 文字| Frontend[前端 Web App]
+    Frontend -->|2. HTTP APIGW[Amazon API Gateway]
     APIGW -->|3. 觸發| Lambda[AWS Lambda: Orchestrator]
 
     subgraph "AWS Intelligence"
@@ -16,8 +16,8 @@ graph LR
 
 
 元件層級		使用服務					職責
-前端	S3 		(Hosting) + React/Vue	處理 Web Audio API 錄音，透過 Presigned URL 上傳音檔。
-接入層		API Gateway				提供 RESTful API 或 WebSocket 介面，處理前後端溝通。
+前端	S3 		html					處理 Web Audio API 錄音，透過 Presigned URL 音檔。
+接入層		API Gateway				提供 RESTful API 介面，處理前後端溝通。
 邏輯層		AWS Lambda (Python)		大腦： 串接各服務 API，處理資料傳遞與流程控制 (Orchestration)
 語音服務		Transcribe / Polly		語音與文字的互轉。
 智能服務		Lex						管理對話情境 (Intent) 與槽位 (Slot) 填寫。
