@@ -1,0 +1,49 @@
+
+name: trader
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: trader_postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: tradertracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  trader:
+    build: .
+    container_name: trader_app
+    restart: always
+    env_file:
+      - config.env
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=root
+      - DB_PASSWORD=secretpassword
+      - DB_NAME=tradertracker
+    depends_on:
+      - postgres
+    command: python -u main.py
+
+  backtest:
+    build: .
+    container_name: trader_backtest
+    env_file:
+      - config.env
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=root
+      - DB_PASSWORD=secretpassword
+      - DB_NAME=tradertracker
+    depends_on:
+      - postgres
+    command: python backtest.py
+
+volumes:
+  pgdata:
