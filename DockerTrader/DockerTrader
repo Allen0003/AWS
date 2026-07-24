@@ -1,27 +1,50 @@
 
 DockerTrader
 
+丟到 aws 改用 AWS EventBridge + AWS Lambda (Serverless)
+
+每12小時跑一次 看要不要下單
+
+
+
 階段一：環境建置與 API 熟悉度測試 (Week 1)
 
-目標：學會用 Python 連接交易所，並在 Docker 內跑起來。
+    目標：學會用 Python 連接交易所，並在 Docker 內跑起來。
 
-註冊一個加密貨幣交易所的 Sandbox（沙盒/測試網） 帳號（例如 Binance Testnet 或 OKX Demo），取得 API Key。
+    註冊一個加密貨幣交易所的 Sandbox（沙盒/測試網） 帳號（例如 Binance Testnet 或 OKX Demo），取得 API Key。
 
-寫一個簡單的 Python 腳本（使用 ccxt 套件，這是一套整合各大交易所 API 的神兵利器），抓取當前的比特幣報價。
+    寫一個簡單的 Python 腳本（使用 ccxt 套件，這是一套整合各大交易所 API 的神兵利器），抓取當前的比特幣報價。
 
-把這個腳本包進 Docker 容器中，確保它可以獨立、穩定地在背景執行。
+    把這個腳本包進 Docker 容器中，確保它可以獨立、穩定地在背景執行。
+
+
+docker build -t trader:latest .
+
+env 是從檔案來
+
+docker run -d \
+  --name trader \
+  --env-file config.env \
+  trader
+
+
+
+改python 要重 build image
+
+
+docker logs -f trader
 
 
 
 階段二：實作資料記錄與簡易回測 (Week 2 - 3)
 
-目標：收集數據，並驗證你的交易邏輯。
+    目標：收集數據，並驗證你的交易邏輯。
 
-讓你的 Docker 程式定期（例如每分鐘）把市場價格寫入資料庫（如 PostgreSQL）。
+    讓你的 Docker 程式定期（例如每分鐘）把市場價格寫入資料庫（如 PostgreSQL）。
 
-找一個最簡單的策略（例如：雙均線策略或簡單的網格交易 Grid Trading）。
+    找一個最簡單的策略（例如：雙均線策略或簡單的網格交易 Grid Trading）。
 
-用歷史數據進行回測，看看如果照這個邏輯跑，歷史績效如何。
+    用歷史數據進行回測，看看如果照這個邏輯跑，歷史績效如何。
 
 
 
@@ -59,7 +82,6 @@ DockerTrader
     Order-Executor（發送下單指令）
 
     然後用 Helm Chart 一把梭哈部署到你的 K8s 叢集裡，在上班時偷偷看 Pod 們互相拋事件。
-
 
 
 
