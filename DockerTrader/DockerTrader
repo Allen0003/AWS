@@ -31,6 +31,9 @@ docker run -d \
 
 改python 要重 build image
 
+DockerFile 裡面也要修改
+
+
 
 docker logs -f trader
 
@@ -48,13 +51,13 @@ docker logs -f trader
 
 
 
-階段三：下單模組與風險控管 (Week 4)
+階段三：下單模組與風險控管 (Week 4)   到這 ******
 
-目標：具備真實下單與安全防護的能力。
+    目標：具備真實下單與安全防護的能力。
 
-實作市價單（Market Order）與限價單（Limit Order）的發送與回報機制。
+    實作市價單（Market Order）與限價單（Limit Order）的發送與回報機制。
 
-最重要的一步：加入 Risk Management（風控機制）。例如：單筆最大虧損限制、總資金部位上限、API 連線中斷時的自動平倉或警報通知（整合 Telegram Bot）。
+    最重要的一步：加入 Risk Management（風控機制）。例如：單筆最大虧損限制、總資金部位上限、API 連線中斷時的自動平倉或警報通知（整合 LINE Bot）。
 
 
 
