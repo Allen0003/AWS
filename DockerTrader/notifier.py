@@ -30,9 +30,9 @@ def send_line_message(message: str):
     try:
         response = requests.post(url, headers=headers, json=data)
         if response.status_code != 200:
-            print(發送 LINE 訊息失敗: {response.text})
+            print(f"發送 LINE 訊息失敗: {response.text}")
     except Exception as e:
         print(f"LINE 訊息連線異常: {e}")
 
 if __name__ == '__main__':
-    send_line_message("🚀 DockerTrader 階段三：LINE Bot 風控通知測試成功！")
+    send_line_message("DockerTrader 階段三：LINE Bot 風控通知測試成功！")
