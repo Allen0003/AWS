@@ -19,12 +19,7 @@ def send_line_message(message: str):
     }
     data = {
         'to': USER_ID,
-        'messages': [
-            {
-                'type': 'text',
-                'text': message
-            }
-        ]
+        'messages': [{'type': 'text', 'text': message}]
     }
 
     try:
@@ -33,6 +28,3 @@ def send_line_message(message: str):
             print(f"發送 LINE 訊息失敗: {response.text}")
     except Exception as e:
         print(f"LINE 訊息連線異常: {e}")
-
-if __name__ == '__main__':
-    send_line_message("DockerTrader 階段三：LINE Bot 風控通知測試成功！")
