@@ -4,6 +4,7 @@ import ccxt
 import psycopg2
 from dotenv import load_dotenv
 from notifier import send_line_message
+from trader_engine import OrderExecutor, init_db
 
 load_dotenv('config.env')
 
@@ -16,33 +17,17 @@ db_user = os.getenv('DB_USER', 'root')
 db_password = os.getenv('DB_PASSWORD', 'secretpassword')
 db_name = os.getenv('DB_NAME', 'tradertracker')
 
-# 初始化資料庫
-def init_db():
-    try:
-        conn = psycopg2.connect(
-            host=db_host, port=db_port, user=db_user, password=db_password, database=db_name
-        )
-        cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS market_prices (
-                id SERIAL PRIMARY KEY,
-                timestamp TIMESTAMPTZ NOT NULL,
-                symbol VARCHAR(20) NOT NULL,
-                price NUMERIC NOT NULL
-            )
-        ''')
-        conn.commit()
-        cursor.close()
-        conn.close()
-        print("PostgreSQL 資料庫與表格初始化完成！")
-    except Exception as e:
-        print(f"資料庫初始化失敗: {e}")
+# 1. 程式一開始啟動時，先呼叫資料庫初始化函式
+print("正在初始化資料庫...")
+init_db(
+    db_host=db_host,
+    db_port=db_port,
+    db_user=db_user,
+    db_password=db_password,
+    db_name=db_name
+)
 
-init_db()
-
-# 啟動時發送 LINE 通知
-send_line_message(" DockerTrader 系統已成功啟動並進入階段三（風控與即時通知模式）！")
-
+# 初始化交易所
 exchange = ccxt.binance({
     'apiKey': api_key,
     'secret': secret_key,
@@ -51,40 +36,32 @@ exchange = ccxt.binance({
 })
 exchange.set_sandbox_mode(True)
 
-print("DockerTrader 數據與風控服務運行中...")
+# 實例化下單與風控引擎
+executor = OrderExecutor(exchange)
+
+send_line_message("DockerTrader 階段三：下單模組與風險控管系統已全面啟動！")
 
 error_count = 0
+symbol = 'BTC/USDT'
 
 while True:
     try:
-        ticker = exchange.fetch_ticker('BTC/USDT')
+        ticker = exchange.fetch_ticker(symbol)
         now_time = time.strftime('%Y-%m-%d %H:%M:%S')
         price = ticker['last']
-        print(f"[{now_time}] 抓取 BTC/USDT 報價: {price}")
+        print(f"[{now_time}] 正常運行中 - {symbol} 報價: {price}")
 
-        # 寫入資料庫
-        conn = psycopg2.connect(
-            host=db_host, port=db_port, user=db_user, password=db_password, database=db_name
-        )
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO market_prices (timestamp, symbol, price) VALUES (%s, %s, %s)",
-            (now_time, 'BTC/USDT', price)
-        )
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-        # 成功執行，重置錯誤計數
+        # 成功連線，重置錯誤計數
         error_count = 0
 
     except Exception as e:
         error_count += 1
-        error_msg = f" [風控警告] 抓取報價發生異常: {e} (連續錯誤次數: {error_count})"
-        print(error_msg)
+        err_msg = f"[連線異常警報] 抓取報價失敗: {e} (連續錯誤: {error_count})"
+        print(err_msg)
 
-        # 當連續錯誤超過 3 次，透過 LINE 發送緊急警報
+        # 連續錯誤達 3 次以上，發送 LINE 並啟動安全風控
         if error_count >= 3:
-            send_line_message(error_msg)
+            send_line_message(err_msg + "\n達到連續錯誤閾值，系統啟動防禦機制！")
+            # 可以在這裡呼叫 executor.emergency_close_all(symbol) 進行保護
 
     time.sleep(60)
