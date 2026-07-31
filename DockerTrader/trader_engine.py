@@ -1,5 +1,6 @@
 import ccxt
 from notifier import send_line_message
+import psycopg2
 
 class RiskManager:
     def __init__(self, max_position_usdt=100.0, max_loss_limit=50.0):
