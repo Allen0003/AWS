@@ -1,0 +1,12 @@
+
+個人專屬 URL 縮短服務 (API Gateway + Lambda + DynamoDB)
+
+做出一個像 bit.ly 或 ppt.cc 的縮網址工具。
+
+用 API Gateway 接聽網址請求（例如 your-api-id/short/abc）。
+
+觸發 Lambda 去 DynamoDB 查詢 abc 對應的真實長網址。
+
+讓瀏覽器重新導向 (Redirect) 到目的地。
+
+學會怎麼用 API Gateway 開發真正的 RESTful API，這是在雲端架設網站或後端最重要的技能。

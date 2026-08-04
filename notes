@@ -36,7 +36,7 @@ TODO: kiro multi agents
 
 
 TODO: 做側專案（Side Project）接案：
-海外很多小型的系統整合、智慧合約（Smart Contract）建置，在平台上（如 Upwork）常常是幾千美金在結算的。以你的技術和英文，下班隨便接一兩個案子，幾週就能賺到你一整年調薪的 2.4 萬。
+海外很多小型的系統整合、智慧合約（Smart Contract）建置，在平台上（如 Upwork）常常是幾千美金在結算的。
 
 
 
@@ -59,3 +59,36 @@ TODO: 微型任務 / 資料標註（Micro-tasks & AI Training）
 
 為什麼輕鬆： 工作內容通常是幫 AI 的回答評分、挑出錯字、或者進行簡單的邏輯校對。只要會打字、看得懂英文，隨時隨地用手機或零碎時間就能做，按小時或按件計酬。
 
+
+
+
+
+TODO:
+
+1. 跨區即時聊天室 (WebSockets API Gateway + Lambda + DynamoDB + ElastiCache Redis)
+
+    怎麼玩：
+
+        建置一個支援雙向通訊的 WebSockets 聊天室（類似 Slack 或 Discord 的簡易版）。
+
+        透過 API Gateway WebSocket 協議 接收連線，用 Lambda 處理訊息廣播。
+
+        使用 DynamoDB 儲存歷史訊息與連線中的 User Session，並用 ElastiCache (Redis) 來管理即時連線的 Pub/Sub 頻道與快取，確保多個 Lambda 執行個體間能同步廣播。
+
+    技術亮點：學會 WebSocket 在 Serverless 架構下的持久連線管理與 Redis 的 Pub/Sub 應用。
+
+
+
+
+TODO:
+4. 具備 JWT 驗證與資安防護的完整 RESTful API (API Gateway + Lambda + Cognito + WAF)
+
+    怎麼玩：
+
+        開發一組完整的後端 API（例如部落格或電商的 CRUD 系統）。
+
+        整合 Amazon Cognito 實作使用者的註冊、登入與 JWT (JSON Web Token) 身分驗證與授權。
+
+        在 API Gateway 前方掛上 AWS WAF (Web Application Firewall)，設定 IP 黑白名單、Rate Limiting（防阻 DDoS 或暴力破解攻擊）。
+
+    技術亮點：不只寫程式，還要懂身分識別（IAM / Cognito）與企業級的 API 資安防禦。
