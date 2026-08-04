@@ -73,6 +73,8 @@ docker exec -it aws-builder /bin/bash
 
 因為第三方套件通常很大且很少變動。把它們單獨做成一個 Layer 丟到 AWS 上
 
+AWS Lambda Layer 的核心概念 就很像是程式開發裡常見的 共用函式庫（Library）、套件庫 或 模組（Modules）。
+
 
 輸入
 ./1-create-bucket.sh
