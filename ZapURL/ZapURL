@@ -42,3 +42,7 @@ Step 3：設定 API Gateway
 設定一個 Catch-all 路由（例如 GET /short/{proxy+}），將流量導向剛剛寫好的 Lambda 函式。
 
 部署 API，取得你的 Invoke URL。
+
+
+
+
