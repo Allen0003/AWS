@@ -10,3 +10,35 @@
 讓瀏覽器重新導向 (Redirect) 到目的地。
 
 學會怎麼用 API Gateway 開發真正的 RESTful API，這是在雲端架設網站或後端最重要的技能。
+
+
+
+
+Step 1： DynamoDB
+
+用來存放「短代碼」與「長網址」的對應關係。
+
+
+Step 2：Lambda
+
+
+Lambda 1 (create-url)：負責接收 POST 請求，產生亂數短代碼，並寫入 DynamoDB。
+
+Lambda 2 (redirect-url)：負責接收 GET 請求，去 DynamoDB 查資料並做 302 轉址。
+
+
+
+
+從 API Gateway 傳來的請求路徑中抓出 shortCode（例如 abc）。
+去 DynamoDB 查詢這個 shortCode 對應的 longUrl。
+
+回傳一個 HTTP 302 (Redirect) 重新導向狀態碼，並在 Header 的 Location 填入長網址。
+
+
+Step 3：設定 API Gateway
+
+建立一個 HTTP API 或 REST API。
+
+設定一個 Catch-all 路由（例如 GET /short/{proxy+}），將流量導向剛剛寫好的 Lambda 函式。
+
+部署 API，取得你的 Invoke URL。
