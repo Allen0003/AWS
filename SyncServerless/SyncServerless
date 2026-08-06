@@ -1,0 +1,22 @@
+
+跨區即時聊天室 (WebSockets API Gateway + Lambda + DynamoDB + ElastiCache Redis)
+
+  建置一個支援雙向通訊的 WebSockets 聊天室（類似 Slack 或 Discord 的簡易版）。
+
+  透過 API Gateway WebSocket 協議 接收連線，用 Lambda 處理訊息廣播。
+
+  使用 DynamoDB 儲存歷史訊息與連線中的 User Session，並用 ElastiCache (Redis) 來管理即時連線的 Pub/Sub 頻道與快取，確保多個 Lambda 執行個體間能同步廣播。
+
+  技術亮點：學會 WebSocket 在 Serverless 架構下的持久連線管理與 Redis 的 Pub/Sub 應用。
+
+
+Step 1：建立 DynamoDB 資料表（存放連線中的使用者 Session 與歷史聊天紀錄）
+
+Step 2：設定 ElastiCache (Redis) 或本機 Redis（跨實例廣播與 Pub/Sub 核心）
+
+Step 3：建立 API Gateway WebSocket API（處理客戶端長連線的 $connect、$disconnect、$default 路由）
+
+Step 4：撰寫 AWS Lambda 後端邏輯（處理連線註冊、訊息廣播與 Redis Pub/Sub 訂閱）
+
+Step 5：前端介面與連線測試（使用簡單的 HTML/JS 進行雙向通訊驗證）
+
