@@ -68,12 +68,16 @@ TODO: 微型任務 / 資料標註（Micro-tasks & AI Training）
 TODO:
 4. 具備 JWT 驗證與資安防護的完整 RESTful API (API Gateway + Lambda + Cognito + WAF)
 
-    怎麼玩：
+    開發一組完整的後端 API（例如部落格或電商的 CRUD 系統）。
 
-        開發一組完整的後端 API（例如部落格或電商的 CRUD 系統）。
+    整合 Amazon Cognito 實作使用者的註冊、登入與 JWT (JSON Web Token) 身分驗證與授權。
 
-        整合 Amazon Cognito 實作使用者的註冊、登入與 JWT (JSON Web Token) 身分驗證與授權。
-
-        在 API Gateway 前方掛上 AWS WAF (Web Application Firewall)，設定 IP 黑白名單、Rate Limiting（防阻 DDoS 或暴力破解攻擊）。
+    在 API Gateway 前方掛上 AWS WAF (Web Application Firewall)，設定 IP 黑白名單、Rate Limiting（防阻 DDoS 或暴力破解攻擊）。
 
     技術亮點：不只寫程式，還要懂身分識別（IAM / Cognito）與企業級的 API 資安防禦。
+
+
+
+TODO:
+bedrock 玩玩看
+

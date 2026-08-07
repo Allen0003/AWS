@@ -10,13 +10,26 @@
   技術亮點：學會 WebSocket 在 Serverless 架構下的持久連線管理與 Redis 的 Pub/Sub 應用。
 
 
+
+
+
+
+
+
 Step 1：建立 DynamoDB 資料表（存放連線中的使用者 Session 與歷史聊天紀錄）
 
 Step 2：設定 ElastiCache (Redis) 或本機 Redis（跨實例廣播與 Pub/Sub 核心）
 
+
 Step 3：建立 API Gateway WebSocket API（處理客戶端長連線的 $connect、$disconnect、$default 路由）
+
+wss://trvnx6ap7f.execute-api.us-east-1.amazonaws.com/production/
+
 
 Step 4：撰寫 AWS Lambda 後端邏輯（處理連線註冊、訊息廣播與 Redis Pub/Sub 訂閱）
 
 Step 5：前端介面與連線測試（使用簡單的 HTML/JS 進行雙向通訊驗證）
+
+
+
 
