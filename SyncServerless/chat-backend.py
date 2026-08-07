@@ -74,6 +74,6 @@ def lambda_handler(event, context):
             print(f"Default route error: {e}")
             return {'statusCode': 500, 'body': 'Failed to process message'}
 
-        return {'statusCode': 200, 'body': 'Message sent.'}
+        return {'statusCode': 200, 'body': json.dumps({'status': 'ok'})}
 
     return {'statusCode': 400, 'body': 'Unrecognized route'}

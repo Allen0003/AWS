@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudPulse Chat (Serverless)</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --chat-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #03a9f4; /* 亮藍色 */
+            --send-btn-color: #00bcd4;
+            --border-color: #333;
+            --my-msg-bg: #0d47a1;
+            --other-msg-bg: #272727;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* 頂部設定區域 */
+        #config-bar {
+            background-color: var(--chat-bg);
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            background-color: #333;
+            border: 1px solid #444;
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+
+        input[type="text"]::placeholder { color: #888; }
+
+        #wss-url-input {
+            flex-grow: 2 !important;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        #connect-btn { background-color: var(--accent-color); color: #000; }
+        #connect-btn:hover { background-color: #4fc3f7; }
+        #connect-btn.connected { background-color: #4caf50; color: white; } /* 連線成功變綠色 */
+        #disconnect-btn { background-color: #f44336; color: white; display: none;} /* 預設隱藏 */
+
+        #status-label {
+            font-size: 0.8em;
+            margin-left: auto;
+            padding: 5px 10px;
+            border-radius: 10px;
+            background: #333;
+        }
+        .status-bad { color: #ef9a9a; }
+        .status-good { color: #a5d6a7; }
+
+        /* 中間聊天區域 */
+        #chat-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+        }
+
+        /* 訊息樣式 */
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .message.my-message {
+            align-self: flex-end;
+            background-color: var(--my-msg-bg);
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.other-message {
+            align-self: flex-start;
+            background-color: var(--other-msg-bg);
+            border-bottom-left-radius: 2px;
+        }
+
+        .message .sender-name {
+            font-size: 0.75em;
+            font-weight: bold;
+            color: #90caf9;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .message.my-message .sender-name { display: none; } /* 自己訊息不顯示名字 */
+
+        .message .msg-time {
+            font-size: 0.65em;
+            color: #aaa;
+            position: absolute;
+            bottom: 2px;
+            right: 8px;
+        }
+
+        /* 底部輸入區域 */
+        #input-area {
+            background-color: var(--chat-bg);
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+        }
+
+        #msg-input {
+            flex-grow: 1;
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 4px;
+            resize: none; /* 防止手動調整大小 */
+            height: 40px;
+        }
+
+        #send-btn {
+            background-color: var(--send-btn-color);
+            color: #000;
+            padding: 0 20px;
+        }
+        #send-btn:hover { background-color: #80deea; }
+        #send-btn:disabled { background-color: #555; cursor: not-allowed; }
+
+    </style>
+</head>
+<body>
+
+    <!-- 頂部連線設定列 -->
+    <div id="config-bar">
+        <input type="text" id="user-name-input" placeholder="你的暱稱 (例如: 小明)" value="Guest">
+        <input type="text" id="wss-url-input" placeholder="請貼上你的 WSS API Gateway 網址" value="wss://trvnx6ap7f.execute-api.us-east-1.amazonaws.com/production/">
+        <button id="connect-btn">連線</button>
+        <button id="disconnect-btn">斷線</button>
+        <span id="status-label" class="status-bad">未連線</span>
+    </div>
+
+    <!-- 聊天訊息顯示區域 -->
+    <div id="chat-container">
+        <!-- 範例訊息 -->
+        <div class="message other-message">
+            <span class="sender-name">系統</span>
+            歡迎來到 Serverless 聊天室！請點擊連線開始聊天。
+            <span class="msg-time">現在</span>
+        </div>
+    </div>
+
+    <!-- 底部輸入發送區域 -->
+    <div id="input-area">
+        <textarea id="msg-input" placeholder="輸入訊息... (Enter鍵發送)" disabled></textarea>
+        <button id="send-btn" disabled>發送</button>
+    </div>
+
+    <script>
+        const userNameInput = document.getElementById('user-name-input');
+        const wssUrlInput = document.getElementById('wss-url-input');
+        const connectBtn = document.getElementById('connect-btn');
+        const disconnectBtn = document.getElementById('disconnect-btn');
+        const statusLabel = document.getElementById('status-label');
+        const chatContainer = document.getElementById('chat-container');
+        const msgInput = document.getElementById('msg-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        let socket = null;
+
+        // --- 初始化：嘗試從 localStorage 讀取上次的設定 ---
+        window.onload = () => {
+            const savedName = localStorage.getItem('chat_user_name');
+            const savedUrl = localStorage.getItem('chat_wss_url');
+            if (savedName) userNameInput.value = savedName;
+            if (savedUrl) wssUrlInput.value = savedUrl;
+        };
+
+        // --- 連線函式 ---
+        function connectWebSocket() {
+            const url = wssUrlInput.value.trim();
+            const name = userNameInput.value.trim() || 'Anonymous';
+
+            if (!url) {
+                alert('請先輸入 WSS 網址！');
+                return;
+            }
+
+            // 儲存設定到 localStorage
+            localStorage.setItem('chat_user_name', name);
+            localStorage.setItem('chat_wss_url', url);
+
+            connectBtn.innerText = '連線中...';
+            connectBtn.disabled = true;
+
+            // 建立 WebSocket 物件
+            socket = new WebSocket(url);
+
+            // --- WebSocket 事件監聽 ---
+
+            // 1. 連線成功
+            socket.onopen = (event) => {
+                console.log('Connected:', event);
+                updateStatus('已連線', 'status-good');
+                connectBtn.style.display = 'none';
+                disconnectBtn.style.display = 'inline-block';
+                msgInput.disabled = false;
+                sendBtn.disabled = false;
+                msgInput.focus();
+            };
+
+            // 2. 收到伺服器訊息
+            socket.onmessage = (event) => {
+                console.log('Message from server:', event.data);
+                try {
+                    const data = JSON.parse(event.data);
+
+                    if (!data.message) return;
+
+                    displayMessage(data.name, data.message, data.name === name);
+                } catch (e) {
+                    console.error('解析訊息失敗', e);
+                }
+            };
+
+            // 3. 連線關閉
+            socket.onclose = (event) => {
+                console.log('Disconnected:', event);
+                updateStatus('未連線', 'status-bad');
+                resetUI();
+            };
+
+            // 4. 連線錯誤
+            socket.onerror = (error) => {
+                console.error('WebSocket Error:', error);
+                updateStatus('連線錯誤', 'status-bad');
+                alert('連線發生錯誤，請檢查 WSS 網址是否正確，以及 API Gateway 是否已部署。');
+                resetUI();
+            };
+        }
+
+        // --- 斷線函式 ---
+        function disconnectWebSocket() {
+            if (socket) {
+                socket.close();
+            }
+        }
+
+        // --- 發送訊息函式 ---
+        function sendMessage() {
+            const message = msgInput.value.trim();
+            const name = userNameInput.value.trim() || 'Anonymous';
+
+            if (message && socket && socket.readyState === WebSocket.OPEN) {
+                const payload = {
+                    action: '$default',
+                    name: name,
+                    message: message
+                };
+                socket.send(JSON.stringify(payload));
+                msgInput.value = ''; // 清空輸入框
+            } else if (!message) {
+                // 空訊息不送出
+            } else {
+                alert('連線已中斷，請重新連線。');
+            }
+        }
+
+        // --- 輔助函式：更新狀態顯示 ---
+        function updateStatus(text, className) {
+            statusLabel.innerText = text;
+            statusLabel.className = className;
+        }
+
+        // --- 輔助函式：重置 UI 狀態 ---
+        function resetUI() {
+            connectBtn.innerText = '連線';
+            connectBtn.disabled = false;
+            connectBtn.style.display = 'inline-block';
+            disconnectBtn.style.display = 'none';
+            msgInput.disabled = true;
+            sendBtn.disabled = true;
+        }
+
+        // --- 輔助函式：在畫面上顯示訊息 ---
+        function displayMessage(sender, text, isMe) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isMe ? 'my-message' : 'other-message'}`;
+
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            let htmlContent = '';
+            if (!isMe) {
+                htmlContent += `<span class="sender-name">${escapeHtml(sender)}</span>`;
+            }
+            htmlContent += `
+                ${escapeHtml(text)}
+                <span class="msg-time">${timeStr}</span>
+            `;
+
+            msgDiv.innerHTML = htmlContent;
+            chatContainer.appendChild(msgDiv);
+
+            // 自動捲動到底部
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // --- 防止 XSS 攻擊的簡單跳脫函式 ---
+        function escapeHtml(text) {
+            if (!text) return text;
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // --- 事件綁定 ---
+        connectBtn.addEventListener('click', connectWebSocket);
+        disconnectBtn.addEventListener('click', disconnectWebSocket);
+
+        // 支援 Enter 鍵發送 (Shift+Enter 換行)
+        msgInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+
+    </script>
+</body>
+</html>
