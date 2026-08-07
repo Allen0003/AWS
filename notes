@@ -25,6 +25,9 @@ docker exec -it aws-builder /bin/bash
 
 
 
+Lambda 執行個體隨用隨生、不用就滅 不能當cache
+
+
 
 
 

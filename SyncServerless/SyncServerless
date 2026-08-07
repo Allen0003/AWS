@@ -33,3 +33,53 @@ Step 5：前端介面與連線測試（使用簡單的 HTML/JS 進行雙向通�
 
 
 
+
+在 chat_backend.py 裡面
+
+的這個在做podcast
+
+            # 廣播給所有連線中的客戶端
+            for item in items:
+                active_conn_id = item['connectionId']
+                try:
+                    apigw_management.post_to_connection(
+                        ConnectionId=active_conn_id,
+                        Data=out_data.encode('utf-8')
+                    )
+                except Exception as ex:
+                    # 如果該連線已失效（例如客戶端異常斷線），可選擇從 DB 清理
+                    print(f"Post to connection {active_conn_id} failed: {ex}")
+
+
+
+
+4. 廣播推送 (Lambda -> API Gateway Management API -> 所有客戶端)
+
+這是最核心的「即時廣播」機制：Lambda 拿到所有人的 connectionId 之後，寫了一個迴圈。它透過 AWS 的專屬管理通道 (apigw_management.post_to_connection)
+
+把這則訊息複製好幾份，分別發送給每一個在線上的 connectionId。
+API Gateway 收到後，就像廣播電台一樣，把訊息透過各自的 WebSocket 通道推送到每一個連線中的瀏覽器（包含你自己的視窗和對方的視窗）。
+
+
+
+
+
+然後在 chat.html
+
+去收 對方的瀏覽器監聽到了 socket.onmessage 事件，收到伺服器傳來的 JSON 資料。
+
+
+            socket.onmessage = (event) => {
+                console.log('Message from server:', event.data);
+                try {
+                    const data = JSON.parse(event.data);
+
+                    if (!data.message) return;
+
+                    displayMessage(data.name, data.message, data.name === name);
+                } catch (e) {
+                    console.error('解析訊息失敗', e);
+                }
+            };
+
+
