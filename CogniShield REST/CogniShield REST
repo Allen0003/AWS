@@ -12,15 +12,15 @@
 
 
 
-第一步：建立資料庫與基礎 CRUD Lambda（後端核心）
+第一步：建立資料庫與基礎 CRUD Lambda（後端核心） (K)
 
-    目標：先確保你的後端程式碼能運作，並具備基本的資料存取能力。
+先確保你的後端程式碼能運作，並具備基本的資料存取能力。
 
-        在 DynamoDB 建立一張資料表（例如 Posts 或 Products，設定主鍵）。
+    在 DynamoDB 建立一張資料表（例如 Posts 或 Products，設定主鍵）。
 
-        撰寫 AWS Lambda 函式（建議用 Python 或 Node.js），實作 CRUD（建立、讀取、更新、刪除）的邏輯。
+    撰寫 AWS Lambda 函式（建議用 Python 或 Node.js），實作 CRUD（建立、讀取、更新、刪除）的邏輯。
 
-        設定 Lambda 的 IAM 角色，賦予其讀寫 DynamoDB 的權限。
+    設定 Lambda 的 IAM 角色，賦予其讀寫 DynamoDB 的權限。
 
 
 
