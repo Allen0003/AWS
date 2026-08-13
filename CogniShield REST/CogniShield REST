@@ -26,21 +26,29 @@
 
 第二步：建立 Amazon Cognito 使用者池（身分驗證）
 
-    目標：實作使用者的註冊、登入，並核發 JWT。
+實作使用者的註冊、登入，並核發 JWT。
 
-        在 Amazon Cognito 建立一個 User Pool（使用者池）。
+    在 Amazon Cognito 建立一個 User Pool（使用者池）。
 
-        設定密碼政策、允許的登入屬性（例如 Email）。
+    設定密碼政策、允許的登入屬性（例如 Email）。
 
-        建立一個 App Client（用於前後端對接）。
+    建立一個 App Client（用於前後端對接）。
 
-        測試註冊一個新帳號、登入，並取得 ID Token / Access Token (JWT)。
+    測試註冊一個新帳號、登入，並取得 ID Token / Access Token (JWT)。
+
+
+pool ID: us-east-1_Aio7dISnt
+
+client id: 4egojc3n5175bds8obmk0n902p
+
+Invoke URL: 
+https://v4m3faa2z7.execute-api.us-east-1.amazonaws.com/dev
 
 
 
 第三步：建立 Amazon API Gateway 並串接 Lambda
 
-    目標：打造對外的 RESTful API 入口。
+目標：打造對外的 RESTful API 入口。
 
         建立一個 HTTP API 或 REST API（建議 REST API 以便後續掛載 WAF 和進階授權）。
 
