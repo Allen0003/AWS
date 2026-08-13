@@ -81,29 +81,97 @@ apss1943@gmail.com
 
 
 
+
+OAuth 2.0 授權流程 (Authorization Code Grant)
+用 Cognito 強迫有token 的才可以進來
+
+token 產生 -> Amazon Cognito  -> 進到 user pool -> 然後找 view login page
+
+然後用 登入
+
+apss1943@gmail.com
+1943Apss@
+
+然後把裡面找到的 secret + 登入後的網址 貼給 ai 叫他產生 get or post 的指令
+
+
+
 第五步：部署 AWS WAF 並掛載到 API Gateway（資安防護）
 
-    目標：阻擋惡意攻擊、限制流量。
-
-        在 AWS WAF 建立一個 Web ACL（記得地區要選對，若 API Gateway 是 Regional，WAF 就要在對應 Region 建立）。
-
-        設定 Rate Limiting（例如限制單一 IP 在 5 分鐘內最多請求幾次，防範 DDoS 或暴力破解）。
-
-        （選用）設定 IP 黑白名單。
-
-        將這個 Web ACL 關聯（Associate）到你的 API Gateway Stage 上。
+要收錢 開完就先關起來
 
 
+阻擋惡意攻擊、限制流量與 DDoS。
+
+建立 Web ACL：
+
+    前往 AWS WAF & Shield 主控台。
+
+    重要：切換到對應的 Region（地區，例如 us-east-1），因為你的 API Gateway 是 Regional 的。
+
+    點擊 Create web ACL，名稱輸入 MyApiWaf，Resource type 選擇 Regional resources。
+
+掛載 API Gateway：
+
+    在 Associated AWS resources 點擊 Add aws resources，選擇 API Gateway，並選中你的 API。
+
+設定 Rate Limiting（流量限制）：
+
+    在 Rules 頁面點擊 Add rules -> Add my own rules and rule groups。
+
+    選擇 Rate-based rule，設定例如：單一 IP 在 5 分鐘內最多發送 100 次請求。
+
+    超過限制的動作（Action）選擇 Block，按下儲存。
+
+完成建立：一路點下一步直到完成。這樣你的 API 就多了一層 WAF 防護網。
 
 
-第六步：全端整合測試與文件撰寫
 
-    目標：驗證整體防護網，並為作品集做準備。
 
-    具體動作：
+第六步：用 S3 建立靜態前端並結合 Amplify 拿 Token
 
-        模擬攻擊測試：用超過頻率的請求打 API，確認 WAF 是否回傳 403 Forbidden。
+目標：擺脫純命令列，用 S3 託管前端網頁，並用 Amplify 實現一鍵登入。
 
-        整理架構圖（Architecture Diagram）。
+    建立 S3 靜態網站：
 
-        寫一份漂亮的 README.md 說明你的架構、技術亮點與部署步驟，放上 GitHub。
+        前往 S3 服務，點擊 Create bucket，建立一個用來放前端網頁的 Bucket（例如 my-frontend-app-bucket）。
+
+        取消勾選「Block all public access」（允許公開讀取，或透過 CloudFront 結合，此處以最簡單的 S3 靜態網站託管為例）。
+
+        在 Bucket 屬性（Properties）最下方開啟 Static website hosting，設定首頁為 index.html。
+
+    寫一個極簡的 index.html：
+
+        在裡面引入 AWS Amplify SDK。
+
+        寫一個簡單的登入按鈕，點擊時觸發 Amplify 的 signInWithRedirect()，自動跳轉到 Cognito。
+
+    設定 Cognito 回呼網址：
+
+        把你 S3 的靜態網站網址（或 CloudFront 網址）加回 Cognito App Client 的 Allowed callback URLs 中。
+
+
+
+
+第七步：全端整合測試與作品集 README 撰寫
+
+目標：驗證整體防護網，並完美收官放上 GitHub。
+
+    模擬攻擊測試（驗證 WAF）：
+
+        用寫好的腳本或連續狂按重新整理超過你在 WAF 設定的頻率（例如 5 分鐘 100 次）。
+
+        確認 API Gateway 開始回傳 403 Forbidden，代表 WAF 成功發揮阻擋效果！
+
+    整理架構圖（Architecture Diagram）：
+
+        用 Draw.io 或 Excalidraw 畫一張架構圖：S3 (前端) ➡️ Cognito (登入) ➡️ API Gateway + WAF (受保護的 API) ➡️ Lambda ➡️ DynamoDB。
+
+    撰寫漂亮的 README.md：
+
+        說明專案架構、使用的 AWS 服務（Cognito, API Gateway, WAF, S3, Lambda, DynamoDB）。
+
+        列出技術亮點（如：OAuth 2.0 授權、API Key/Token 防護、WAF Rate Limiting 禦敵）。
+
+        把程式碼推上 GitHub（記得絕對不要把 Client Secret 放進去），完成你的頂級個人雲端側專案！
+
