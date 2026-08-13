@@ -41,33 +41,42 @@ pool ID: us-east-1_Aio7dISnt
 
 client id: 4egojc3n5175bds8obmk0n902p
 
-Invoke URL: 
+Invoke URL:
 https://v4m3faa2z7.execute-api.us-east-1.amazonaws.com/dev
 
 
 
 第三步：建立 Amazon API Gateway 並串接 Lambda
 
-目標：打造對外的 RESTful API 入口。
+打造對外的 RESTful API 入口。
 
-        建立一個 HTTP API 或 REST API（建議 REST API 以便後續掛載 WAF 和進階授權）。
+    建立一個 HTTP API 或 REST API（建議 REST API 以便後續掛載 WAF 和進階授權）。
 
-        將 API 的各個路由（例如 /posts）對應到第一步寫好的 Lambda 函式。
+    將 API 的各個路由（例如 /posts）對應到第一步寫好的 Lambda 函式。
 
-        部署 API 並透過 Postman 測試基本的 CRUD 是否通暢。
+    部署 API 並透過 Postman 測試基本的 CRUD 是否通暢。
 
 
 
 
 第四步：在 API Gateway 整合 Cognito JWT 驗證
 
-    目標：讓 API 具備身分驗證能力，未帶有效 JWT 的請求會被直接拒絕。
+讓 API 具備身分驗證能力，未帶有效 JWT 的請求會被直接拒絕。
 
-        在 API Gateway 設定 Cognito Authorizer（授權方），將第二步的 Cognito User Pool 綁定上去。
+    在 API Gateway 設定 Cognito Authorizer（授權方），將第二步的 Cognito User Pool 綁定上去。
 
-        將需要保護的 API 路由（例如 POST, PUT, DELETE）的授權設定改為這個 Authorizer。
+    將需要保護的 API 路由（例如 POST, PUT, DELETE）的授權設定改為這個 Authorizer。
 
-        再次使用 Postman 測試：沒帶 JWT 應該拿到 401 Unauthorized；帶上有效的 JWT 才能成功操作。
+    再次使用 Postman 測試：沒帶 JWT 應該拿到 401 Unauthorized；帶上有效的 JWT 才能成功操作。
+
+
+curl -X GET https://v4m3faa2z7.execute-api.us-east-1.amazonaws.com/dev/posts \
+-H "Authorization: 貼上你的_ID_Token_字串"
+
+
+Cognito 使用者池（User Pool）帳號！
+apss1943@gmail.com
+1943Apss@
 
 
 
