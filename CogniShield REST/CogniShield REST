@@ -96,6 +96,12 @@ apss1943@gmail.com
 
 
 
+
+
+
+
+
+
 第五步：部署 AWS WAF 並掛載到 API Gateway（資安防護）
 
 要收錢 開完就先關起來
@@ -119,13 +125,18 @@ apss1943@gmail.com
 
     在 Rules 頁面點擊 Add rules -> Add my own rules and rule groups。
 
-    選擇 Rate-based rule，設定例如：單一 IP 在 5 分鐘內最多發送 100 次請求。
+    選擇 Rate-based rule，設定例如：單一 IP 在 2 分鐘內最多發送 10 次請求。
 
     超過限制的動作（Action）選擇 Block，按下儲存。
 
 完成建立：一路點下一步直到完成。這樣你的 API 就多了一層 WAF 防護網。
 
 
+
+
+
+
+http://my-secure-blog-frontend-2026.s3-website-us-east-1.amazonaws.com
 
 
 第六步：用 S3 建立靜態前端並結合 Amplify 拿 Token
