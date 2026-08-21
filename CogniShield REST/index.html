@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js"></script>
 </head>
 <body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
-    <h1>AWS 企業級資安 API 測試</h1>
+    <h1>AWS 企業級資安 API 測試222</h1>
     <div id="auth-status">尚未登入</div>
     <br>
     <button id="login-btn" onclick="login()" style="padding: 10px 20px; font-size: 16px;">登入 / 註冊</button>
@@ -17,7 +17,6 @@
     <pre id="result" style="margin: 20px auto; width: 60%; text-align: left; background: #f4f4f4; padding: 15px; border-radius: 5px;"></pre>
 
     <script>
-        // 修正後的 Amplify 設定結構（確保 Auth 底下正確對應 User Pool 與 OAuth）
         const awsConfig = {
             Auth: {
                 region: 'us-east-1',
@@ -36,30 +35,39 @@
         aws_amplify.Amplify.configure(awsConfig);
 
         function login() {
-            // 導向 Cognito 登入頁面
-            aws_amplify.Auth.federatedSignIn();
+            try {
+                aws_amplify.Auth.federatedSignIn();
+            } catch (err) {
+                console.error("登入跳轉失敗: ", err);
+                alert("登入觸發失敗: " + err);
+            }
         }
 
         async function fetchApi() {
             try {
-                // 取得當前登入使用者的 Session 與 JWT Token
                 const session = await aws_amplify.Auth.currentSession();
-                const jwtToken = session.getIdToken().getJwtToken();
+                const idToken = session.getIdToken().getJwtToken();
+                const accessToken = session.getAccessToken().getJwtToken();
 
-                document.getElementById('result').innerText = "取得 Token 成功，正在呼叫 API...";
+                document.getElementById('result').innerText = 
+                    "=== ID Token ===\n" + idToken + 
+                    "\n\n=== Access Token ===\n" + accessToken;
 
-                // 發送請求到 API Gateway
                 const response = await fetch('https://v4m3faa2z7.execute-api.us-east-1.amazonaws.com/dev/posts', {
                     method: 'GET',
                     headers: {
-                        'Authorization': jwtToken
+                        'Authorization': `Bearer ${idToken}`
                     }
                 });
 
+                if (!response.ok) {
+                    throw new Error(`HTTP 錯誤! 狀態碼: ${response.status}`);
+                }
+
                 const data = await response.json();
-                document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+                document.getElementById('result').innerText += "\n\n=== API 回傳結果 ===\n" + JSON.stringify(data, null, 2);
             } catch (err) {
-                document.getElementById('result').innerText = "錯誤 (未登入或無權限): " + err;
+                document.getElementById('result').innerText += "\n\n錯誤發生: " + err;
             }
         }
     </script>
