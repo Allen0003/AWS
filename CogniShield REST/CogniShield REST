@@ -26,7 +26,7 @@
 
 第二步：建立 Amazon Cognito 使用者池（身分驗證）
 
-Cognito 類似做 OAuth 的
+Cognito 類似做 OAuth 的 *****
 
 實作使用者的註冊、登入，並核發 JWT。
 
@@ -198,7 +198,7 @@ d3brrqmtmdy5wo.cloudfront.net
 
     整理架構圖（Architecture Diagram）：
 
-        用 Draw.io 或 Excalidraw 畫一張架構圖：S3 (前端) ➡️ Cognito (登入) ➡️ API Gateway + WAF (受保護的 API) -> Lambda -> DynamoDB。
+        用 Draw.io 或 Excalidraw 畫一張架構圖：S3 (前端) -> Cognito (登入) -> API Gateway +  -> Lambda -> DynamoDB。
 
     撰寫漂亮的 README.md：
 
