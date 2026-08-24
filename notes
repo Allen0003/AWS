@@ -79,11 +79,23 @@ bedrock 玩玩看
 AI agent
 
 
-Amazon Kiro, Amazon Q Developer
+Amazon Kiro -> 自己寫 code
+Amazon Q Developer -> 類似聊天機器人
 
 
 jyoka.app
-做做第三方串接
+做第三方串接
+
+
+
+步驟 2：動手嘗試一個「微型專案」（Mini-Project 提案）
+
+不要一開始就挑戰寫大型系統，建議讓 AI 帶你做以下其中一個小專案：
+
+    專案 A：簡易網頁計數器 / 待辦清單（測試 AI 產生前後端檔案的能力）
+
+    專案 B：天氣查詢 API 爬蟲工具（測試 AI 串外部 API 與處理錯誤的能力）
+    隨便寫寫 prompt 就寫完了
 
 
 
