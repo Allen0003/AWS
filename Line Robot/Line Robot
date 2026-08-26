@@ -1,0 +1,111 @@
+
+
+用 AWS Lambda 打造你的「全自動個人 Line 機器人」
+
+    API Gateway + AWS Lambda + Bedrock，做出一個完全不用租伺服器、全年 24 小時運作、而且幾乎不花錢的聊天機器人。
+
+    架構概念：
+
+        在 Line 傳訊息給機器人 -> Line 發送 Webhook 到 AWS API Gateway -> 觸發 AWS Lambda 執行 Python 程式 -> 程式呼叫 Bedrock 的 Claude 產生回覆 -> 回傳給 Line。
+
+        因為 Lambda 是「用多少算多少」（每個月有 100 萬次免費請求），只要沒人找它聊天，開銷就是 0 元！
+
+
+
+
+步驟一：設定 LINE Messaging API 頻道
+
+    前往 LINE Developers Console 並登入。
+
+    建立一個 Provider（供應商）與一個 Channel (Messaging API)。
+
+    進入你的 Channel，找到以下兩個重要資訊並妥善保存：
+
+        Channel Access Token（長期存取權杖，需在 Messaging API 分頁下方發行）。
+
+        Channel Secret（通道密鑰，在 Basic settings 分頁）。
+
+步驟二：建立 AWS Lambda 執行環境
+
+    登入 AWS Management Console，搜尋並進入 Lambda 服務。
+
+    點擊 Create function（建立函式）：
+
+        選擇 Author from scratch（從頭開始）。
+
+        Function name：輸入你的機器人名稱（例如 line-bedrock-bot）。
+
+        Runtime：選擇 Python 3.11（或更新版本）。
+
+        Architecture：x86_64。
+
+    點擊 Create function。
+
+步驟三：設定 IAM 權限（讓 Lambda 呼叫 Bedrock）
+
+由於 Lambda 需要呼叫 Bedrock，必須賦予其對應的權限：
+
+    在你的 Lambda 函式頁面中，切換到 Configuration（組態）> Permissions（權限）。
+
+    點擊 Role name 連結，這會帶你前往 IAM 主控台。
+
+    在 IAM 角色頁面中，點擊 Add permissions > Attach policies。
+
+    搜尋並勾選 AmazonBedrockFullAccess（或建立自訂原則僅允許呼叫 Claude 模型）。
+
+    點擊 Add permissions。
+
+步驟四：撰寫 Lambda Python 程式碼
+
+回到 Lambda 函式頁面，在 Code（程式碼）分頁中貼入以下程式碼。
+
+    注意： 我們會使用 boto3 來呼叫 Bedrock，並用 urllib 將訊息回傳給 LINE。
+
+
+步驟五：設定環境變數
+
+    在 Lambda 頁面中，切換到 Configuration > Environment variables。
+
+    點擊 Edit，新增一個變數：
+
+        Key: LINE_ACCESS_TOKEN
+
+        Value: 填入你在步驟一取得的 LINE Channel Access Token。
+
+    點擊 Save。
+
+步驟六：建立 API Gateway（連結 LINE Webhook）
+
+    在 AWS 搜尋並進入 API Gateway。
+
+    選擇 HTTP API（推薦，簡單且便宜），點擊 Build。
+
+    點擊 Add integration，選擇 Lambda。
+
+    選擇你在步驟二建立的 Lambda 函式（line-bedrock-bot）。
+
+    API name 輸入一個名稱（例如 line-bot-api）。
+
+    Configure routes 保持預設（ANY 與 /{proxy+}），點擊 Next。
+
+    Configure stages 保持預設（$default 自動佈署），點擊 Next 然後 Create。
+
+    建立完成後，在 API 總覽頁面複製 Invoke URL（叫用網址）。
+
+步驟七：綁定 LINE Webhook
+
+    回到 LINE Developers Console 的你的 Channel 頁面。
+
+    切換到 Messaging API 分頁。
+
+    找到 Webhook URL 欄位，點擊 Edit。
+
+    將你在步驟六取得的 API Gateway Invoke URL 貼上。
+
+    開啟 Use webhook 的開關。
+
+    點擊 Verify 測試連線，如果出現 Success 綠色字樣就代表大功告成！
+
+    💡 小建議：現在你可以打開手機加你的 LINE 機器人好友並傳送訊息了！因為使用 Lambda 的免費額度與 Bedrock 按次計費，只要沒人聊天，每個月的成本確實就是完美的 0 元。
+
+    請問在實作過程中有遇到哪一個步驟卡住嗎？
