@@ -72,8 +72,11 @@ TODO: 微型任務 / 資料標註（Micro-tasks & AI Training）
 
 
 
-TODO:
-bedrock 玩玩看
+
+bedrock 雲端的 LLM 上面有很多模型
+
+Dify 是 用滑鼠拖曳 做出 AI 產品 類似 wordpress
+
 
 
 AI agent
@@ -92,10 +95,17 @@ jyoka.app
 
 不要一開始就挑戰寫大型系統，建議讓 AI 帶你做以下其中一個小專案：
 
-    專案 A：簡易網頁計數器 / 待辦清單（測試 AI 產生前後端檔案的能力）
+    專案 A：簡易網頁計數器 / 待辦清單（測試 AI 產生前後端檔案的能力） + 第三方登入
 
     專案 B：天氣查詢 API 爬蟲工具（測試 AI 串外部 API 與處理錯誤的能力）
-    隨便寫寫 prompt 就寫完了
+    隨便寫寫 prompt 就寫完了 + keda 版本
 
+
+
+專案C 古巴骨牌
+
+
+
+我想用 sepc driven 做一個 待辦清單 要有前後端 前端用 angular 後端用 java 要怎樣開始
 
 
