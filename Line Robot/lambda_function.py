@@ -1,22 +1,17 @@
 import json
 import os
 import urllib.request
-import boto3
-
-# 初始化 Bedrock 客戶端
-bedrock = boto3.client(
-    service_name='bedrock-runtime', region_name='us-east-1'
-)
 
 # 讀取環境變數
 LINE_ACCESS_TOKEN = os.environ.get('LINE_ACCESS_TOKEN')
+# 💡 等等要在 Lambda 環境變數填入你的免費 API Key (例如 Groq Key)
+FREE_AI_API_KEY = os.environ.get('FREE_AI_API_KEY')
 
 
 def lambda_handler(event, context):
-  print('收到原始 Event:', json.dumps(event))  # 👈 把收到的東西印出來看
+  print('收到原始 Event:', json.dumps(event))
 
   try:
-    # 兼容處理：有些 API Gateway 會把 body 變成字串，有些會直接是 dict
     body_raw = event.get('body', '{}')
     if isinstance(body_raw, str):
       body = json.loads(body_raw)
@@ -30,38 +25,53 @@ def lambda_handler(event, context):
       ] == 'text':
         user_message = event_item['message']['text']
         reply_token = event_item['replyToken']
-        print(f'收到使用者訊息: {user_message}')  # 👈 印出收到的訊息
+        print(f'收到使用者訊息: {user_message}')
 
         if '欸屁馬' in user_message:
           ai_reply = '我是欸屁馬 快樂的一天'
         elif '菲比豬' in user_message:
           ai_reply = '我是欸屁馬 愛放屁 噗噗噗'
         else:
-          ai_reply = call_bedrock(user_message)
+          # 改呼叫不用錢的第三方免費 AI API
+          ai_reply = call_free_ai(user_message)
 
         # 透過 LINE Reply API 將訊息回覆給使用者
         send_line_reply(reply_token, ai_reply)
 
     return {'statusCode': 200, 'body': json.dumps('Success')}
   except Exception as e:
-    print(f'發生錯誤: {str(e)}')  # 👈 把錯誤印出來
+    print(f'發生錯誤: {str(e)}')
     return {'statusCode': 500, 'body': json.dumps(str(e))}
 
 
-def call_bedrock(prompt):
+def call_free_ai(prompt):
+  # 這裡以 Groq 免費 API 為例 (相容 OpenAI 格式，速度極快)
+  url = 'https://api.groq.com/openai/v1/chat/completions'
+  headers = {
+      'Content-Type': 'application/json',
+      'Authorization': f'Bearer {FREE_AI_API_KEY}',
+  }
   payload = {
-      'anthropic_version': 'bedrock-2023-05-31',
-      'max_tokens': 1000,
+      'model': 'llama-3.1-8b-instant',  # Groq 的免費高速開源模型
       'messages': [{'role': 'user', 'content': prompt}],
+      'max_tokens': 1000,
   }
 
-  response = bedrock.invoke_model(
-      modelId='anthropic.claude-3-haiku-20240307-v1:0',
-      body=json.dumps(payload),
+  req = urllib.request.Request(
+      url,
+      data=json.dumps(payload).encode('utf-8'),
+      headers=headers,
+      method='POST',
   )
 
-  result = json.loads(response['body'].read())
-  return result['content'][0]['text']
+  try:
+    with urllib.request.urlopen(req) as response:
+      result = json.loads(response.read().decode('utf-8'))
+      return result['choices'][0]['message']['content']
+  except urllib.error.HTTPError as e:
+    err_msg = e.read().decode('utf-8')
+    print(f'免費 AI API 報錯: {e.code} - {err_msg}')
+    return '抱歉，免費 AI 腦袋暫時短路了！'
 
 
 def send_line_reply(reply_token, text):
