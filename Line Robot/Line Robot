@@ -41,6 +41,9 @@
 
     點擊 Create function。
 
+
+
+
 步驟三：設定 IAM 權限（讓 Lambda 呼叫 Bedrock）
 
 由於 Lambda 需要呼叫 Bedrock，必須賦予其對應的權限：
@@ -51,15 +54,20 @@
 
     在 IAM 角色頁面中，點擊 Add permissions > Attach policies。
 
-    搜尋並勾選 AmazonBedrockFullAccess（或建立自訂原則僅允許呼叫 Claude 模型）。
+    搜尋並勾選 AmazonBedrockFullAccess （或建立自訂原則僅允許呼叫 Claude 模型）。
 
     點擊 Add permissions。
+
+
+
 
 步驟四：撰寫 Lambda Python 程式碼
 
 回到 Lambda 函式頁面，在 Code（程式碼）分頁中貼入以下程式碼。
 
     注意： 我們會使用 boto3 來呼叫 Bedrock，並用 urllib 將訊息回傳給 LINE。
+
+
 
 
 步驟五：設定環境變數
@@ -73,6 +81,11 @@
         Value: 填入你在步驟一取得的 LINE Channel Access Token。
 
     點擊 Save。
+
+
+
+
+********
 
 步驟六：建立 API Gateway（連結 LINE Webhook）
 
@@ -91,6 +104,14 @@
     Configure stages 保持預設（$default 自動佈署），點擊 Next 然後 Create。
 
     建立完成後，在 API 總覽頁面複製 Invoke URL（叫用網址）。
+
+
+
+Invoke URL
+https://jp1dwikf4l.execute-api.us-east-1.amazonaws.com/default
+
+
+
 
 步驟七：綁定 LINE Webhook
 
